@@ -26,16 +26,27 @@ public class Obstacle extends Moving{
     public void move(float xdir, float ydir) {
         setLeft(getLeft()+ xdir);
         setRight(getRight()+ xdir);
-        if (getSpeed() >0 && getLeft()> getAbs_limit()){
+        if (getSpeed() >0 && getLeft()>= getAbs_limit()){
             setLeft(-getWidth());
-            setRight(getLeft() + getWidth());
+            setRight(0);
         }
-        else if(getSpeed() <0 && getRight()<0){
-            setRight(getAbs_limit()+ getWidth());
-            setLeft(getRight()-getWidth());
+        else if(getSpeed() <0 && getRight()<=0) {
+            setLeft(getAbs_limit());
+            setRight(getAbs_limit() + getWidth());
+        }
+//        left += xdir;
+//        right += xdir;
+//        if (speed>0 && left >= abs_limit){
+//            left = -width;
+//            right = 0;}
+//        else if(speed<0 && right <=0){
+//            left = abs_limit;
+//            right = abs_limit - width;
+//        }
+        }
 
-    }
-    }
+
+
 
     public static class Car extends Obstacle{
 

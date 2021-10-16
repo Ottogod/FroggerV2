@@ -7,6 +7,10 @@ public abstract class Moving {
     private float right;
     private float width;
     private float height;
+    private float top;
+    private float bottom;
+    private float range;
+    private float speed;
 
     public void setLeft(float left) {
         this.left = left;
@@ -72,10 +76,7 @@ public abstract class Moving {
         return speed;
     }
 
-    private float top;
-    private float bottom;
-    private float range;
-    private float speed;
+
 
     public Moving(float x, float y, float width, float height, float range, float speed){
         this.left = x;
@@ -84,6 +85,8 @@ public abstract class Moving {
         this.top = y + height;
         this. range = range;
         this.speed = speed;
+        this.width = width;
+        this.height = height;
     }
 
     public abstract void move(float xdir, float ydir);

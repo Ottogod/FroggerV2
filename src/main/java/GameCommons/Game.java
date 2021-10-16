@@ -14,7 +14,7 @@ public class Game implements IFrog, IEnvironment{
     private int grid;
     private int ranges;
     private int columns;
-    private int gameState;
+    private boolean gameState;
     private int game_width;
     private int game_height;
 
@@ -24,7 +24,7 @@ public class Game implements IFrog, IEnvironment{
         this.columns = columns;
         this.game_width = columns*grid;
         this.game_height = ranges*grid;
-        this.gameState = 0;
+        this.gameState = false;
     }
 
     public int getGrid() {
@@ -51,11 +51,11 @@ public class Game implements IFrog, IEnvironment{
         this.columns = columns;
     }
 
-    public int getGameState() {
+    public boolean getGameState() {
         return gameState;
     }
 
-    public void setGameState(int gameState) {
+    public void setGameState(boolean gameState) {
         this.gameState = gameState;
     }
 
@@ -77,96 +77,53 @@ public class Game implements IFrog, IEnvironment{
 
 
 
-//    @Override
-//    public ArrayList<Car> defile_car_range(int y, int range) {
-//
-//        int number_cars = random_btw(2,4);
-//        int x = random_btw(0, columns*grid);
-//        int size = random_btw(2,4)*grid;
-//        int speed = random_btw(-2,2);
-//        ArrayList<Car> cars = new ArrayList<Car>();
-//
-//        for (int i=0; i<number_cars; i++){
-//            Car car = new Car(x +i*(size + random_btw(10,50)), y , size, y+grid, range, speed, columns*grid);
-//            cars.add(car);
-//        }
-//        return cars;
-//    }
-//
-//    @Override
-//    public ArrayList<Trunk> defile_trunk_range(int y, int range) {
-//        int number_trunks = random_btw(2,4);
-//        int x = random_btw(0, columns*grid);
-//        int size = random_btw(3,4)*grid;
-//        int speed = random_btw(-2,2);
-//        ArrayList<Trunk> trunks = new ArrayList<Trunk>();
-//
-//        for (int i=0; i<number_trunks; i++){
-//            Trunk trunk = new Trunk(x +i*(size + random_btw(10,50)), y , size, y+grid, range, speed,columns*grid);
-//            trunks.add(trunk);
-//        }
-//        return trunks;
-//    }
-//
-//    @Override
-//    public ArrayList<Car> defile_cars(int begin, int end) {
-//        ArrayList<Car> cars = new ArrayList<Car>();
-//        for (int i = 0; i<=end-begin; i++){
-//            ArrayList<Car> range_i = defile_car_range(begin + i*grid, i+begin);
-//            cars.addAll(range_i);
-//        }
-//        return cars;
-//    }
-//
-//    @Override
-//    public ArrayList<Trunk> defile_trunks(int begin, int end) {
-//        ArrayList<Trunk> trunks = new ArrayList<Trunk>();
-//        for (int i = 0; i<=end-begin; i++){
-//            ArrayList<Trunk> range_i = new ArrayList<Trunk>(); defile_trunk_range(begin + i*grid, i+begin);
-//            trunks.addAll(range_i);
-//        }
-//        return trunks;
-//    }
-//
-//    @Override
-//    public void update_cars(ArrayList<Car> cars) {
-//        for (int i=0; i<cars.size(); i++){
-//            cars.get(i).move(cars.get(i).getSpeed()*grid, 0);
-//        }
-//    }
-//
-//    @Override
-//    public void update_trunks(ArrayList<Trunk> trunks) {
-//        for (int i=0; i<trunks.size(); i++){
-//            trunks.get(i).move(trunks.get(i).getSpeed()*grid, 0);
-//
-//    }}
-
-
 
     @Override
-    public Car[] car_range(int range) {
-        int x = 0;
-        int size = random_btw(2,4)*grid;
-        int number = random_btw(2,4);
-        int speed = random_btw(1,2);
-        Car[] cars = new Car[number];
+    public ArrayList<Car> car_range(int range) {
+        int x = random_btw(0, getGame_width());
+
+
+        int number = random_btw(1,3);
+        int speed;
+        int k = random_btw(0,1);
+        if (k ==0){
+            speed = random_btw(-2,-1);
+        }
+        else {
+            speed = random_btw(1,2);
+        }
+
+        ArrayList<Car> cars = new ArrayList<Car>();
         for (int i=0; i<number; i ++){
-            x = x +i*size + random_btw(10,50);
-            cars[i]= new Car(x , game_height-(range+1)*grid,size, grid, range, speed, game_width);
+            int size = random_btw(1,3)*grid;
+            x = x - size- Math.abs(speed)*grid;
+
+            cars.add(new Car(x , game_height-(range+1)*grid,size, grid, range, speed, game_width));
+
         }
         return cars;
     }
 
     @Override
     public ArrayList<Trunk> trunk_range(int range) {
-        int x = random_btw(0, game_width);
-        int size = random_btw(3,4)*grid;
-        int number = random_btw(2,4);
-        int speed = random_btw(-2,2);
+        int x = random_btw(0, getGame_width());
+        int size = 3 *grid;
+
+        int speed;
+        int number = 3;
+        int k = random_btw(0,1);
+        if (k ==0){
+            speed = random_btw(-2,-1);
+        }
+        else {
+            speed = random_btw(1,2);
+        }
+
         ArrayList<Trunk> trunks = new ArrayList<Trunk>();
         for (int i=0; i<number; i ++){
-            trunks.add(new Trunk(x +i*size + random_btw(10,50), game_height-(range+1)*grid,size, grid, range, speed, game_width));
+            x = x - size-Math.abs(speed)*grid;
+            trunks.add(new Trunk(x, game_height-(range+1)*grid,size, grid, range, speed, game_width));
+
         }
         return trunks;
     }
@@ -192,12 +149,13 @@ public class Game implements IFrog, IEnvironment{
     @Override
     public void deal_state_frog(Frog frog) {
         if ((frog.isCar_intersection()==frog.isTrunk_intersection()) || (frog.getLeft()<0 || frog.getRight()>this.game_width||frog.getBottom()<0||frog.getTop()>this.game_height)){
-            setGameState(-1);
+
             System.out.println("GAME OVER");
             resetFrog(frog);
         }
-        if (frog.getRange() == this.getRanges()-1){
-            setGameState(1);
+
+        if (frog.getRange() >= this.getRanges()-1){
+            setGameState(true);
             System.out.println("GAME CLEARED");
         }
 
@@ -208,8 +166,8 @@ public class Game implements IFrog, IEnvironment{
     public void resetFrog(Frog frog) {
         frog.setLeft(columns*grid/2-grid/2);
         frog.setRight(columns*grid/2-grid/2+grid);
-        frog.setBottom(columns*grid-grid);
-        frog.setTop(columns*grid );
+        frog.setBottom(ranges*grid-grid);
+        frog.setTop(ranges*grid );
         frog.setCar_intersection(false);
         frog.setTrunk_intersection(true);
         frog.setRange(0);
@@ -222,15 +180,69 @@ public class Game implements IFrog, IEnvironment{
         return frog;
     }
 
-//    @Override
-//    public void reset_obstacle(Obstacle o) {
-//        if (o.getSpeed() >0 && o.getLeft()> o.getAbs_limit()){
-//            o.setLeft(-o.getWidth());
-//            o.setRight(o.getLeft() + o.getWidth());
-//        }
-//        else if(o.getSpeed() <0 && o.getRight()<0){
-//            o.setRight(o.getAbs_limit()+ o.getWidth());
-//            o.setLeft(o.getRight()-o.getWidth());
-//        }
-//    }
+    @Override
+    public Frog set_Frog2P1() {
+        Frog frog = new Frog(getGame_width()/4, this.game_height-grid, grid);
+        return frog;
+    }
+
+    @Override
+    public Frog set_Frog2P2() {
+        Frog frog = new Frog(3*getGame_width()/4, this.game_height-grid, grid);
+        return frog;
+    }
+
+    @Override
+    public void resetFrog2P1(Frog frog) {
+        frog.setLeft(getGame_width()/4);
+        frog.setRight(getGame_width()/4+grid);
+        frog.setBottom(ranges*grid-grid);
+        frog.setTop(ranges*grid );
+        frog.setCar_intersection(false);
+        frog.setTrunk_intersection(true);
+        frog.setRange(0);
+    }
+
+    @Override
+    public void resetFrog2P2(Frog frog) {
+        frog.setLeft(3*getGame_width()/4);
+        frog.setRight(3*getGame_width()/4+grid);
+        frog.setBottom(ranges*grid-grid);
+        frog.setTop(ranges*grid );
+        frog.setCar_intersection(false);
+        frog.setTrunk_intersection(true);
+        frog.setRange(0);
+
+    }
+
+    @Override
+    public void deal_state_frog2P1(Frog frog) {
+        if ((frog.isCar_intersection()==frog.isTrunk_intersection()) || (frog.getLeft()<0 || frog.getRight()>this.game_width||frog.getBottom()<0||frog.getTop()>this.game_height)){
+
+            System.out.println("GAME OVER");
+            resetFrog2P1(frog);
+        }
+
+        if (frog.getRange() >= this.getRanges()-1){
+            setGameState(true);
+            System.out.println("GAME CLEARED");
+        }
+    }
+
+    @Override
+    public void deal_state_frog2P2(Frog frog) {
+        if ((frog.isCar_intersection()==frog.isTrunk_intersection()) || (frog.getLeft()<0 || frog.getRight()>this.game_width||frog.getBottom()<0||frog.getTop()>this.game_height)){
+
+            System.out.println("GAME OVER");
+            resetFrog2P2(frog);
+        }
+
+        if (frog.getRange() >= this.getRanges()-1){
+            setGameState(true);
+            System.out.println("GAME CLEARED");
+        }
+
+    }
+
+//
 }

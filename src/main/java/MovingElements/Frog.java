@@ -7,13 +7,7 @@ public class Frog extends Moving{
     private float top;
     private float range;
 
-    public float getWidth() {
-        return width;
-    }
 
-    public void setWidth(float width) {
-        this.width = width;
-    }
 
     private float width;
     private boolean car_intersection;
@@ -69,7 +63,15 @@ public class Frog extends Moving{
         }
         // Si l'obstacle n'est pas une voiture (mais un tronc), on a besoin de savoir si frog est à l'intérieur d'un tronc ou non
         else {
-            return (this.range == obstacle.getRange() && this.right > obstacle.getRight() && this.left < obstacle.getLeft());
+            return (this.getRange() == obstacle.getRange() && (this.getRight() < obstacle.getRight() && this.getLeft() > obstacle.getLeft()));
         }
     }
+
+//    public void car_intersection_modifier(Obstacle.Car car){
+//        this.setCar_intersection(this.intersect(car));
+//    }
+//    public void trunk_intersection_modifier(Obstacle.Trunk trunk){
+//        this.setTrunk_intersection(this.intersect(trunk));
+//
+//    }
 }
